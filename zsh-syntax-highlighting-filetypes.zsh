@@ -61,9 +61,9 @@ _zsh_highlight-zle-buffer() {
       local cache_place=${zsh_highlight_caches[i]}
       local -a rh; rh=($region_highlight)
       {
-        "$func"
+        [[ -n "$func" ]] && whence "$func" &>/dev/null && "$func"
       } always  {
-        : ${(PA)cache_place::=${region_highlight:#(${(~j.|.)rh})}}
+        [[ -n "$cache_place" && "$cache_place" == [a-zA-Z_]* ]] && : ${(PA)cache_place::=${region_highlight:#(${(~j.|.)rh})}}
       }
     done
   } always {
@@ -78,7 +78,7 @@ _zsh_highlight-zle-buffer-p() {
   local region_highlight_size="$1" highlight_predicate="$2"
   # If any highlightings are not taken into account, asume it is needed.
   # This holds for some up/down-history commands, for example.
-  ((region_highlight_size == 0)) || "$highlight_predicate"
+  ((region_highlight_size == 0)) || { [[ -n "$highlight_predicate" ]] && "$highlight_predicate"; } 2>/dev/null
 }
 
 # Whether the command line buffer is modified or not.
